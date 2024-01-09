@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 spotipy = "*"
+pandas = "*"
 
 [dev-packages]
 
