@@ -1,3 +1,13 @@
 {
-    "editor.fontSize": 13.25
+    "editor.fontSize": 13.25,
+
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": true,
+            "source.organizeImports.ruff": true
+        },
+        
+        "editor.defaultFormatter": "charliermarsh.ruff"
+    }
 }
