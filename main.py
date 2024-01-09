@@ -1,5 +1,6 @@
 from typing import List, Tuple
 
+import pandas as pd
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyClientCredentials
 
@@ -9,7 +10,6 @@ spotify = Spotify(client_credentials_manager=SpotifyClientCredentials())
 
 
 if __name__ == "__main__":
-    # df = pd.DataFrame(columns=["track_id", "track_name", "artists", "genres"])
     tracks_info: List[Tuple[str, str]] = []
     genre = "slap house"
     for i in 0, 50, 100:
@@ -35,6 +35,10 @@ if __name__ == "__main__":
                 ]
             )
 
-    print(len(set(tracks_info)))
-    # tracks_number = sum([playlist['tracks']['total'] for playlist in playlists])
-    # print(tracks_number)
+    df = pd.DataFrame(data=set(tracks_info), columns=["track_id", "genres"])
+    df.to_csv("./data/tracks_info.csv", index=False)
+
+    df = df.groupby("track_id")["genres"].apply(list).reset_index()
+    print(df.head())
+# tracks_number = sum([playlist['tracks']['total'] for playlist in playlists])
+# print(tracks_number)
