@@ -1,0 +1,19 @@
+{
+    "recommendations": [
+        "almenon.arepl",
+        "charliermarsh.ruff",
+        "donjayamanne.python-environment-manager",
+        "KevinRose.vsc-python-indent",
+        "mintlify.document",
+        "ms-python.black-formatter",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "njpwerner.autodocstring",
+        "njqdev.vscode-python-typehint",
+        "oderwat.indent-rainbow",
+        "PKief.material-icon-theme",
+        "tamasfe.even-better-toml",
+        "VisualStudioExptTeam.intellicode-api-usage-examples",
+        "VisualStudioExptTeam.vscodeintellicode"
+    ]
+}
