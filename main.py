@@ -1,13 +1,9 @@
 from typing import List, Tuple
 
 import pandas as pd
-from spotipy import Spotify
-from spotipy.oauth2 import SpotifyClientCredentials
 
+from auth import spotify
 from utils.url import url_to_id
-
-spotify = Spotify(client_credentials_manager=SpotifyClientCredentials())
-
 
 if __name__ == "__main__":
     tracks_info: List[Tuple[str, str]] = []
