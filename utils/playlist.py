@@ -65,8 +65,8 @@ def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS):
 def get_tracks_from_many(playlists: List[dict]) -> List[dict]:
     tracks: List[dict] = []
 
-    for i in range(len(playlists)):
-        playlist_id = url_to_id(playlists[i]["href"])
+    for i, playlist in enumerate(playlists):
+        playlist_id = url_to_id(playlist["href"])
         print(f"playlist #{i + 1} - {playlist_id}")
 
         playlist_tracks = get_tracks(playlist_id)
