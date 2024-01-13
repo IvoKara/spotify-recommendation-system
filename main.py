@@ -1,38 +1,53 @@
+from os import path
 from typing import List, Tuple
 
 import pandas as pd
 
-from auth import spotify
+from definitions import LOCAL_DATA_DIR
+from utils import playlist as pl
 from utils.url import url_to_id
 
+
+def prepare(track: dict) -> dict:
+    prepared = {
+        "track_id": track["id"],
+        "track_name": track["name"],
+        "artists": [artist["name"] for artist in track["artists"]],
+        "image_url": track["album"]["images"][0]["url"],
+        "release_date": track["album"]["release_date"],
+    }
+
+    return prepared
+
+
 if __name__ == "__main__":
-    tracks_info: List[Tuple[str, str]] = []
+    tracks: List[Tuple[str, str]] = []
     genre = "slap house"
-    for i in 0, 50, 100:
-        print(i)
-        search = spotify.search(genre, offset=i, limit=50, type="playlist")
-        playlists = search["playlists"]["items"]
 
-        for playlist in playlists:
-            # print(f'{playlist["name"]} - {playlist["tracks"]["total"]} tracks total')
+    print("Searching playlists")
+    playlists = pl.search_by_genre(genre)
 
-            playlist_id = url_to_id(playlist["href"])
-            # print(playlist_id)
+    print("gettings playlists tracks")
+    for i in range(len(playlists)):
+        print("playlist #", i + 1)
 
-            playlist_tracks = spotify.playlist_tracks(
-                playlist_id, fields="items(track(id))"
-            )["items"]
+        playlist_id = url_to_id(playlists[i]["href"])
+        playlist_tracks = pl.get_tracks(playlist_id)
 
-            tracks_info.extend(
-                [
-                    (item["track"]["id"], genre)
-                    for item in playlist_tracks
-                    if item["track"] is not None
-                ]
-            )
+        print("tracks count ", len(playlist_tracks))
+        tracks.extend(playlist_tracks)
 
-    df = pd.DataFrame(data=set(tracks_info), columns=["track_id", "genres"])
-    df.to_csv("./data/tracks_info.csv", index=False)
+    prepared_tracks = list(map(lambda x: prepare(x["track"]), tracks))
+
+    df = pd.DataFrame.from_dict(prepared_tracks)
+    print("with duplicates: ", len(df.index))
+    df["genres"] = genre
+
+    df = df.drop_duplicates(subset=["track_id", "genres"])
+    print("without duplicates: ", len(df.index))
+
+    filepath = path.join(LOCAL_DATA_DIR, "tracks.csv")
+    df.to_csv(filepath, sep=";", mode="a", index=False)
 
     df = df.groupby("track_id")["genres"].apply(list).reset_index()
     print(df.head())
