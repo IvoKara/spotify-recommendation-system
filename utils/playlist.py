@@ -66,12 +66,12 @@ def get_tracks_from_many(playlists: List[dict]) -> List[dict]:
     tracks: List[dict] = []
 
     for i in range(len(playlists)):
-        print("playlist #", i + 1)
-
         playlist_id = url_to_id(playlists[i]["href"])
+        print(f"playlist #{i + 1} - {playlist_id}")
+
         playlist_tracks = get_tracks(playlist_id)
 
         print("tracks count ", len(playlist_tracks))
         tracks.extend(playlist_tracks)
 
-    return tracks
+    return [x["track"] for x in tracks if x["track"] is not None]
