@@ -1,9 +1,7 @@
 from os import path
 
 from definitions import TRACKS_PATH
-from scripts.fetch_data import collect_general_track_data
-
-# from scripts.load_data import prepare
+from scripts.fetch_api_data import collect_general_track_data
 
 if __name__ == "__main__":
     if not path.isfile(TRACKS_PATH):
