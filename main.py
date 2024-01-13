@@ -2,6 +2,7 @@ from os import path
 
 from definitions import TRACKS_PATH, TRACKS_WITH_FEATURES_PATH
 from scripts.fetch_api_data import collect_general_track_data
+from scripts.include_features_data import include_features_to_data
 
 
 def load_data():
@@ -14,7 +15,7 @@ def load_data():
             print("There is some local data here. Using it...")
 
         print("Now adding audio features to the tracks...")
-        # include_features_to_data()
+        include_features_to_data()
 
     # prepare data
 
