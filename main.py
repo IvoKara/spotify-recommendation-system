@@ -1,11 +1,9 @@
 from os import path
-from typing import List, Tuple
 
 import pandas as pd
 
 from definitions import LOCAL_DATA_DIR
 from utils import playlist as pl
-from utils.url import url_to_id
 
 
 def prepare(track: dict) -> dict:
@@ -21,21 +19,13 @@ def prepare(track: dict) -> dict:
 
 
 if __name__ == "__main__":
-    tracks: List[Tuple[str, str]] = []
     genre = "slap house"
 
     print("Searching playlists")
     playlists = pl.search_by_genre(genre)
 
     print("gettings playlists tracks")
-    for i in range(len(playlists)):
-        print("playlist #", i + 1)
-
-        playlist_id = url_to_id(playlists[i]["href"])
-        playlist_tracks = pl.get_tracks(playlist_id)
-
-        print("tracks count ", len(playlist_tracks))
-        tracks.extend(playlist_tracks)
+    tracks = pl.get_tracks_from_many(playlists)
 
     prepared_tracks = list(map(lambda x: prepare(x["track"]), tracks))
 

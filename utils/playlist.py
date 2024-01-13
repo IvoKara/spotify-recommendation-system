@@ -2,6 +2,7 @@ import re
 from typing import List, Literal
 
 from auth import spotify
+from utils.url import url_to_id
 
 
 def search_by_genre(
@@ -57,5 +58,20 @@ def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS):
             offset = int(matches[0])
         else:
             break
+
+    return tracks
+
+
+def get_tracks_from_many(playlists: List[dict]) -> List[dict]:
+    tracks: List[dict] = []
+
+    for i in range(len(playlists)):
+        print("playlist #", i + 1)
+
+        playlist_id = url_to_id(playlists[i]["href"])
+        playlist_tracks = get_tracks(playlist_id)
+
+        print("tracks count ", len(playlist_tracks))
+        tracks.extend(playlist_tracks)
 
     return tracks
