@@ -40,7 +40,6 @@ def include_features_to_data():
         audio_features.extend(spotify.audio_features(track_ids))
 
     features_df = pd.DataFrame(audio_features, columns=NECESSARY_FEATURES)
-    print(features_df.head())
 
     df = df.merge(features_df, left_on="track_id", right_on="id", how="left")
     print("with audio features", len(df.index), "tracks")
