@@ -32,7 +32,7 @@ def include_features_to_data():
     df = preprocess(df)
 
     # TODO: use `np.split()` instead
-    id_chunks = np.array_split(df["track_id"][:30], 10)
+    id_chunks = np.array_split(df["track_id"], 100)
 
     print("fetching audio features for tracks")
     audio_features = []
