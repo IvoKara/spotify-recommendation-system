@@ -6,7 +6,10 @@ def remove_duplicates(df: pd.DataFrame):
 
 
 def merge_by_genre(df: pd.DataFrame):
-    return df.groupby("track_id").agg(tuple).map(list).reset_index()
+    genres_df = df.groupby("track_id")["genres"].agg(list).reset_index()
+    df = df.drop_duplicates(["track_id"]).drop("genres", axis=1)
+
+    return genres_df.merge(df, on="track_id")
 
 
 def preprocess(df: pd.DataFrame):
