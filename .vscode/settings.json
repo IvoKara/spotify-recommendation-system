@@ -8,5 +8,13 @@
         },
         "editor.defaultFormatter": "charliermarsh.ruff"
     },
-    "python.defaultInterpreterPath": "./.venv/bin/python"
+    "python.defaultInterpreterPath": "./.venv/bin/python",
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true,
+    "terminal.integrated.env.windows": {
+        "PYTHONPATH": "${workspaceFolder}"
+    },
+    "terminal.integrated.env.linux": {
+        "PYTHONPATH": "${workspaceFolder}"
+    },
 }
