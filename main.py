@@ -3,6 +3,7 @@ from os import path
 from definitions import TRACKS_PATH, TRACKS_WITH_FEATURES_PATH
 from scripts.fetch_api_data import collect_general_track_data
 from scripts.include_features_data import include_features_to_data
+from scripts.use_local_data import use_local_data
 
 
 def load_data():
@@ -17,14 +18,21 @@ def load_data():
         print("Now adding audio features to the tracks...")
         include_features_to_data()
 
-    # prepare data
-
-    # return prepared data
+    print("Using locally saved data")
+    return use_local_data()
 
 
 if __name__ == "__main__":
-    load_data()
+    df = load_data()
 
-    # df = pd.read_csv(TRACKS_PATH, delimiter=";")
-    # df = prepare(df)
-    # print(df.head())
+    print(df.dtypes)
+    print(df["genres"][0][0])
+    print(df["artists"][21][0])
+    print(len(df.index))
+
+    print(df.loc[df["genres"].map(lambda x: len(x)) > 1])
+
+    null_mask = df.isnull().any(axis=1)
+    null_rows = df[null_mask]
+
+    print(null_rows)

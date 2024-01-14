@@ -21,8 +21,8 @@ def collect_general_track_data():
         df["genres"] = genre
 
         # save locally
-        print("data saved locally")
         df.to_csv(TRACKS_PATH, sep=";", mode="a", index=False)
+    print("data saved locally")
 
 
 # def fetch_with_audio_features():
