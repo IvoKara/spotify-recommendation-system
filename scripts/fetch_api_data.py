@@ -1,4 +1,5 @@
 from itertools import chain
+from os import path
 
 import pandas as pd
 
@@ -9,7 +10,8 @@ from utils import track as tr
 
 
 def collect_general_track_data():
-    for genre in chain.from_iterable(subgenres):
+    flattened_genres = chain.from_iterable(subgenres)
+    for i, genre in enumerate(flattened_genres):
         print("Searching playlists for - ", genre)
         playlists = pl.search_by_genre(genre)
 
@@ -21,9 +23,12 @@ def collect_general_track_data():
         df["genres"] = genre
 
         # save locally
-        df.to_csv(TRACKS_PATH, sep=";", mode="a", index=False)
+        has_data = path.isfile(TRACKS_PATH)
+        mode = "w" if has_data and i == 0 else "a"
+        header = not has_data or mode == "w"
+        df.to_csv(TRACKS_PATH, sep=";", mode=mode, header=header, index=False)
     print("data saved locally")
 
 
-# def fetch_with_audio_features():
-#     pd.read_csv(TRACKS_PATH, delimiter=";")
+if __name__ == "__main__":
+    collect_general_track_data()
