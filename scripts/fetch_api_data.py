@@ -19,7 +19,7 @@ def collect_general_track_data():
         tracks = pl.get_tracks_from_many(playlists)
 
         prepared_tracks = list(map(tr.prepare, tracks))
-        df = pd.DataFrame.from_dict(prepared_tracks)
+        df = pd.DataFrame(prepared_tracks)
         df["genres"] = genre
 
         # save locally

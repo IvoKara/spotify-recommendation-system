@@ -4,6 +4,7 @@ import pandas as pd
 from auth import spotify
 from definitions import TRACKS_PATH, TRACKS_WITH_FEATURES_PATH
 from scripts.preprocess_data import preprocess
+from spotify_types import TrackAudioFeatures
 
 NECESSARY_FEATURES = [
     "id",
@@ -23,8 +24,20 @@ NECESSARY_FEATURES = [
 ]
 
 
-def fetch_audio_features(track_ids: list):
-    pass
+def fetch_audio_features(track_ids: pd.Series, split_by: int):
+    id_chunks = np.array_split(track_ids, split_by)
+
+    audio_features: list[TrackAudioFeatures] = []
+    for id_chunk in id_chunks:
+        temp_features: list[TrackAudioFeatures] | None = (
+            spotify.audio_features(id_chunk.tolist())  # noqa
+        )
+        if temp_features is None:
+            raise Exception("error in audio_features request")
+
+        audio_features.extend(temp_features)
+
+    return audio_features
 
 
 def include_features_to_data():
@@ -33,14 +46,9 @@ def include_features_to_data():
 
     # split into equal parts
     count = len(df.index) // 80 + 1
-    id_chunks = np.array_split(df["track_id"], count)
 
     print("fetching audio features for tracks")
-    audio_features = []
-    for track_ids in id_chunks:
-        temp_features = spotify.audio_features(track_ids.tolist())
-        audio_features.extend(temp_features)
-
+    audio_features = fetch_audio_features(df["track_id"], count)
     features_df = pd.DataFrame(audio_features, columns=NECESSARY_FEATURES)
 
     df = df.merge(features_df, left_on="track_id", right_on="id")
