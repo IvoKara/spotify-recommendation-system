@@ -42,8 +42,7 @@ PLAYLIST_FIELDS = re.sub(
 
 
 def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS):
-    offset = 0
-    count = 0
+    offset, count = 0, 0
     tracks = []
 
     while True:
@@ -51,7 +50,15 @@ def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS):
         total = int(data["total"])
         count += len(data["items"])
 
-        tracks.extend(data["items"])
+        # without 'track' key
+        # and filtered broken tracks
+        cleaned_tracks = [
+            x["track"]  # noqa
+            for x in data["items"]
+            if tr.is_valid(x["track"])
+        ]
+
+        tracks.extend(cleaned_tracks)
 
         if total > count:
             matches = re.findall("offset=(\\d+)", data["next"])
@@ -74,4 +81,4 @@ def get_tracks_from_many(playlists: List[dict]) -> List[dict]:
         print("tracks count ", len(playlist_tracks))
         tracks.extend(playlist_tracks)
 
-    return [x["track"] for x in tracks if x["track"] is not None]
+    return tracks

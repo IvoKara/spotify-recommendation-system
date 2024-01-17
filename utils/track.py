@@ -10,3 +10,12 @@ def prepare(track: dict) -> dict:
     }
 
     return prepared
+
+
+def is_valid(track: dict) -> bool:
+    # Instruct Ruff to remain it on multiple lines
+    return (
+        track is not None  # noqa
+        and track["id"] is not None
+        and track["name"] is not None
+    )
