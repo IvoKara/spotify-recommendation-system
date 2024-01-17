@@ -17,5 +17,19 @@ class Playlist(TypedDict):
     uri: str
 
 
+class PlaylistUser(TypedDict):
+    id: str
+    href: str
+    type: Literal["user"]
+    uri: str
+
+
+class PlaylistItem(TypedDict):
+    added_at: str
+    added_by: PlaylistUser
+    is_local: bool
+    track: Track
+
+
 class PlaylistItemsResponse(ResponseObject):
-    items: list[Track]
+    items: list[PlaylistItem]
