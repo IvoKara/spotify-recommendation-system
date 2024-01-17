@@ -1,15 +1,18 @@
 import pandas as pd
 
+from definitions import TRACKS_PATH
+
 
 def remove_duplicates(df: pd.DataFrame):
     return df.drop_duplicates(subset=["track_id", "genres"])
 
 
 def merge_by_genre(df: pd.DataFrame):
-    genres_df = df.groupby("track_id")["genres"].agg(list).reset_index()
+    grouped_df = df.groupby(["track_id"])
+    genres_df = grouped_df.agg({"genres": list}).reset_index()
     df = df.drop_duplicates(["track_id"]).drop("genres", axis=1)
 
-    return genres_df.merge(df, on="track_id")
+    return genres_df.merge(df, on="track_id", how="right")
 
 
 def preprocess(df: pd.DataFrame):
@@ -23,5 +26,6 @@ def preprocess(df: pd.DataFrame):
     return df
 
 
-# df = pd.read_csv(TRACKS_WITH_FEATURES_PATH, delimiter=";")
-# tracks_with_features_df = prepare(df)
+if __name__ == "__main__":
+    df = pd.read_csv(TRACKS_PATH, delimiter=";")
+    df = preprocess(df)

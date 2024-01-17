@@ -31,19 +31,25 @@ def include_features_to_data():
     df = pd.read_csv(TRACKS_PATH, delimiter=";")
     df = preprocess(df)
 
-    # TODO: use `np.split()` instead
-    id_chunks = np.array_split(df["track_id"], 100)
+    # split into equal parts
+    count = len(df.index) // 80 + 1
+    id_chunks = np.array_split(df["track_id"], count)
 
     print("fetching audio features for tracks")
     audio_features = []
     for track_ids in id_chunks:
-        audio_features.extend(spotify.audio_features(track_ids))
+        temp_features = spotify.audio_features(track_ids.tolist())
+        audio_features.extend(temp_features)
 
     features_df = pd.DataFrame(audio_features, columns=NECESSARY_FEATURES)
 
-    df = df.merge(features_df, left_on="track_id", right_on="id", how="left")
+    df = df.merge(features_df, left_on="track_id", right_on="id")
     print("with audio features", len(df.index), "tracks")
 
     print("Saving data locally...")
     df.to_csv(TRACKS_WITH_FEATURES_PATH, sep=";", index=False)
     print("Tracks with features successfully saved")
+
+
+if __name__ == "__main__":
+    include_features_to_data()
