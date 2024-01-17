@@ -1,7 +1,20 @@
-def prepare(track: dict) -> dict:
-    album_images: list = track["album"]["images"]
+from typing import TypedDict
 
-    prepared = {
+from spotify_types import Image, Track
+
+
+class PreparedTrack(TypedDict):
+    track_id: str
+    track_name: str
+    artists: list[str]
+    image_url: str | None
+    release_date: str
+
+
+def prepare(track: Track) -> PreparedTrack:
+    album_images: list[Image] = track["album"]["images"]
+
+    prepared: PreparedTrack = {
         "track_id": track["id"],
         "track_name": track["name"],
         "artists": [artist["name"] for artist in track["artists"]],
@@ -12,7 +25,7 @@ def prepare(track: dict) -> dict:
     return prepared
 
 
-def is_valid(track: dict) -> bool:
+def is_valid(track: Track) -> bool:
     # Instruct Ruff to remain it on multiple lines
     return (
         track is not None  # noqa

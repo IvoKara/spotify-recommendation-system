@@ -1,20 +1,27 @@
 import re
-from typing import List, Literal
+from typing import Literal
 
+import utils.track as tr
 from auth import spotify
+from spotify_types import Playlist, PlaylistItemsResponse, SearchResult, Track
 from utils.url import url_to_id
 
 
 def search_by_genre(
     genre: str,
     count: Literal[50, 100, 150] = 150,
-) -> List[dict]:
+) -> list[Playlist]:
     limit = 50
-    playlists = []
+    playlists: list[Playlist] = []
 
     for offset in range(0, count, limit):
-        print(offset)
-        search = spotify.search(genre, limit, offset, type="playlist")
+        search: SearchResult | None = spotify.search(
+            q=genre, limit=limit, offset=offset, type="playlist"
+        )
+
+        if search is None:
+            raise Exception("Error in search request")
+
         playlists.extend(search["playlists"]["items"])
 
     return playlists
@@ -41,15 +48,21 @@ PLAYLIST_FIELDS = re.sub(
 )
 
 
-def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS):
+def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS) -> list[Track]:
     offset, count = 0, 0
-    tracks = []
+    tracks: list[Track] = []
 
     while True:
-        data = spotify.playlist_tracks(playlist_id, fields=fields, offset=offset)
+        data: PlaylistItemsResponse | None = spotify.playlist_tracks(
+            playlist_id, fields=fields, offset=offset
+        )
+
+        if data is None:
+            raise Exception("Error in playlist_items request")
+
         total = int(data["total"])
         count += len(data["items"])
-
+        next_url = data["next"]
         # without 'track' key
         # and filtered broken tracks
         cleaned_tracks = [
@@ -60,8 +73,8 @@ def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS):
 
         tracks.extend(cleaned_tracks)
 
-        if total > count:
-            matches = re.findall("offset=(\\d+)", data["next"])
+        if total > count and next_url is not None:
+            matches = re.findall("offset=(\\d+)", next_url)
             offset = int(matches[0])
         else:
             break
@@ -69,8 +82,8 @@ def get_tracks(playlist_id: str, fields=PLAYLIST_FIELDS):
     return tracks
 
 
-def get_tracks_from_many(playlists: List[dict]) -> List[dict]:
-    tracks: List[dict] = []
+def get_tracks_from_many(playlists: list[Playlist]) -> list[Track]:
+    tracks: list[Track] = []
 
     for i, playlist in enumerate(playlists):
         playlist_id = url_to_id(playlist["href"])
