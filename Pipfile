@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 spotipy = "*"
 pandas = "*"
+numpy = "*"
+scikit-learn = "*"
 
 [dev-packages]
 
