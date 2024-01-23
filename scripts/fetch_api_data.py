@@ -20,7 +20,7 @@ def collect_general_track_data():
 
         prepared_tracks = list(map(tr.prepare, tracks))
         df = pd.DataFrame(prepared_tracks)
-        df["genres"] = genre
+        df["genres"] = genre.replace(" ", "_")
 
         # save locally
         has_data = path.isfile(TRACKS_PATH)
