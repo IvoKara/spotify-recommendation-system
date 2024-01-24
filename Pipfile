@@ -8,6 +8,7 @@ spotipy = "*"
 pandas = "*"
 numpy = "*"
 scikit-learn = "*"
+textblob = "*"
 
 [dev-packages]
 
