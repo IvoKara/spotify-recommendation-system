@@ -9,6 +9,7 @@ class PreparedTrack(TypedDict):
     artists: list[str]
     image_url: str | None
     release_date: str
+    popularity: int
 
 
 def prepare(track: Track) -> PreparedTrack:
@@ -20,6 +21,7 @@ def prepare(track: Track) -> PreparedTrack:
         "artists": [artist["name"] for artist in track["artists"]],
         "image_url": album_images[0]["url"] if album_images else None,
         "release_date": track["album"]["release_date"],
+        "popularity": track["popularity"] or 0,
     }
 
     return prepared
