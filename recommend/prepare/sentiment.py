@@ -29,16 +29,19 @@ def categorize_polarity(score: float):
 
 
 def sentiment_analysis(df: pd.DataFrame, column: str):
-    df["subjectivity"] = (
-        df[column]
-        .apply(subjectivity)  # noqa
-        .apply(categorize_subjectivity)
+    sentiment_df = pd.DataFrame(
+        {
+            "subjectivity": (
+                df[column]
+                .apply(subjectivity)  # noqa
+                .apply(categorize_subjectivity)
+            ),
+            "polarity": (
+                df[column]
+                .apply(polarity)  # noqa
+                .apply(categorize_polarity)
+            ),
+        }
     )
 
-    df["polarity"] = (
-        df[column]
-        .apply(polarity)  # noqa
-        .apply(categorize_polarity)
-    )
-
-    return df
+    return sentiment_df
