@@ -1,3 +1,5 @@
+import re
+
 import pandas as pd
 
 from definitions import TRACKS_WITH_FEATURES_PATH
@@ -7,8 +9,10 @@ def reformat(df: pd.DataFrame, column: str):
     """
     Convert list columns from stringified list to actial list
     """
-    artists_column = df[column]
-    df[column] = artists_column.apply(lambda a: a.strip("[]").split(","))
+    new_column = df[column]
+    df[column] = new_column.apply(
+        lambda x: re.sub(r"[\'\[\]]", "", x).split(", "),
+    )
 
     return df
 

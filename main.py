@@ -1,6 +1,7 @@
 from os import path
 
 from definitions import TRACKS_PATH, TRACKS_WITH_FEATURES_PATH
+from recommend.prepare import create_features_set
 from scripts.fetch_api_data import collect_general_track_data
 from scripts.include_features_data import include_features_to_data
 from scripts.use_local_data import use_local_data
@@ -25,14 +26,6 @@ def load_data():
 if __name__ == "__main__":
     df = load_data()
 
-    print(df.dtypes)
-    print(df["genres"][0][0])
-    print(df["artists"][21][0])
-    print(len(df.index))
-
-    print(df.loc[df["genres"].map(lambda x: len(x)) > 1])
-
-    null_mask = df.isnull().any(axis=1)
-    null_rows = df[null_mask]
-
-    print(null_rows)
+    features_df = create_features_set(df)
+    print(features_df.head())
+    print(features_df.dtypes)

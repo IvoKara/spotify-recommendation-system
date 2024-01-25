@@ -37,6 +37,7 @@ PLAYLIST_FIELDS = re.sub(
         track(
             id,
             name,
+            popularity,
             artists(name),
             album(
                 release_date,
