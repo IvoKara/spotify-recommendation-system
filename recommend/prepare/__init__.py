@@ -32,7 +32,8 @@ def create_features_set(df: pd.DataFrame):
             key_df,
             mode_df,
             normalized_df,
-        ]
+        ],
+        axis=1,
     )
 
     not_trasformed_cols = ["track_id", "artists", "image_url"]
