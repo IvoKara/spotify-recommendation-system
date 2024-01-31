@@ -26,7 +26,6 @@ def create_features_set(df: pd.DataFrame):
     featured_df = pd.concat(
         [
             genre_df,
-            sentiment_df,
             subjectivity_df,
             polarity_df,
             key_df,
@@ -36,7 +35,6 @@ def create_features_set(df: pd.DataFrame):
         axis=1,
     )
 
-    not_trasformed_cols = ["track_id", "artists", "image_url"]
-    featured_df[not_trasformed_cols] = df[not_trasformed_cols]
+    featured_df["track_id"] = df["track_id"]
 
     return featured_df
