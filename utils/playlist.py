@@ -9,7 +9,7 @@ from utils.url import url_to_id
 
 def search_by_genre(
     genre: str,
-    count: Literal[50, 100, 150] = 150,
+    count: Literal[1, 50, 100, 150] = 50,
 ) -> list[Playlist]:
     limit = 50
     playlists: list[Playlist] = []
