@@ -1,10 +1,12 @@
+from os import path
+
 import numpy as np
 import pandas as pd
 
 from auth import spotify
-from definitions import TRACKS_PATH, TRACKS_WITH_FEATURES_PATH
+from definitions import FEATURES_PATH, TRACKS_PATH, TRACKS_WITH_FEATURES_PATH
 from scripts.preprocess_data import preprocess
-from spotify_types import TrackAudioFeatures
+from spotify_types.track import TrackAudioFeatures
 
 NECESSARY_FEATURES = [
     "id",
@@ -25,19 +27,25 @@ NECESSARY_FEATURES = [
 
 
 def fetch_audio_features(track_ids: pd.Series, split_by: int):
-    id_chunks = np.array_split(track_ids, split_by)
+    id_chunks: list[pd.Series] = np.array_split(track_ids, split_by)  # type: ignore
 
-    audio_features: list[TrackAudioFeatures] = []
     for id_chunk in id_chunks:
-        temp_features: list[TrackAudioFeatures] | None = (
+        index: pd.RangeIndex = id_chunk.index  # type: ignore
+        print(f"Fetching audio features for tracks #{index.start} - #{index.stop}")
+        audio_features: list[TrackAudioFeatures] | None = (
             spotify.audio_features(id_chunk.tolist())  # noqa
         )
-        if temp_features is None:
+        if audio_features is None:
             raise Exception("error in audio_features request")
 
-        audio_features.extend(temp_features)
+        has_data = path.isfile(FEATURES_PATH)
+        mode = "w" if has_data and index.start == 0 else "a"
+        header = not has_data or mode == "w"
+        audio_df = pd.DataFrame(list(filter(None, audio_features)))
+        audio_df.to_csv(FEATURES_PATH, sep=";", mode=mode, header=header, index=False)
 
-    return audio_features
+    distinct_df = pd.read_csv(FEATURES_PATH, delimiter=";").drop_duplicates()
+    distinct_df.to_csv(FEATURES_PATH, sep=";", index=False)
 
 
 def include_features_to_data():
@@ -45,17 +53,18 @@ def include_features_to_data():
     df = preprocess(df)
 
     # split into equal parts
-    count = len(df.index) // 80 + 1
+    count = len(df.index) // (100 - 2)
 
     print("fetching audio features for tracks")
-    audio_features = fetch_audio_features(df["track_id"], count)
-    features_df = pd.DataFrame(audio_features, columns=NECESSARY_FEATURES)
+    # comment bellow if you already have data
+    fetch_audio_features(df["track_id"], count)
+    features_df = pd.read_csv(FEATURES_PATH, delimiter=";", usecols=NECESSARY_FEATURES)
 
-    df = df.merge(features_df, left_on="track_id", right_on="id")
+    merged_df = pd.merge(df, features_df, left_on="track_id", right_on="id")
     print("with audio features", len(df.index), "tracks")
 
     print("Saving data locally...")
-    df.to_csv(TRACKS_WITH_FEATURES_PATH, sep=";", index=False)
+    merged_df.to_csv(TRACKS_WITH_FEATURES_PATH, sep=";", index=False)
     print("Tracks with features successfully saved")
 
 
