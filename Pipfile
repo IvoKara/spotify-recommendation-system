@@ -9,6 +9,7 @@ pandas = "*"
 numpy = "*"
 scikit-learn = "*"
 textblob = "*"
+print-color = "*"
 
 [dev-packages]
 
