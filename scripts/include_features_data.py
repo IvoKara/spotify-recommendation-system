@@ -49,19 +49,19 @@ def fetch_audio_features(track_ids: pd.Series, split_by: int):
 
 
 def include_features_to_data():
-    df = pd.read_csv(TRACKS_PATH, delimiter=";")
-    df = preprocess(df)
+    tracks_df = pd.read_csv(TRACKS_PATH, delimiter=";")
+    tracks_df = preprocess(tracks_df)
 
     # split into equal parts
-    count = len(df.index) // (100 - 2)
+    count = len(tracks_df.index) // (100 - 2)
 
     print("fetching audio features for tracks")
     # comment bellow if you already have data
-    fetch_audio_features(df["track_id"], count)
+    fetch_audio_features(tracks_df["track_id"], count)
     features_df = pd.read_csv(FEATURES_PATH, delimiter=";", usecols=NECESSARY_FEATURES)
 
-    merged_df = pd.merge(df, features_df, left_on="track_id", right_on="id")
-    print("with audio features", len(df.index), "tracks")
+    merged_df = pd.merge(tracks_df, features_df, left_on="track_id", right_on="id")
+    print("with audio features", len(tracks_df.index), "tracks")
 
     print("Saving data locally...")
     merged_df.to_csv(TRACKS_WITH_FEATURES_PATH, sep=";", index=False)
