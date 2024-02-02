@@ -6,7 +6,7 @@ def slog(text: str):
 
 
 def dlog(text: str):
-    cprint(text, tag="dedug", tag_color="black", color="white")
+    cprint(text, tag="debug", tag_color="black", color="white")
 
 
 def ilog(text: str):
