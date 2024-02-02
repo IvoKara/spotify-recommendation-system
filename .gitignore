@@ -3,7 +3,7 @@
 ###------------------###
 
 #local data directory
-data/
+data/*_bak.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
