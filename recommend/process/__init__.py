@@ -1,19 +1,15 @@
 import pandas as pd
-from sklearn.metrics.pairwise import cosine_similarity
+
+from ..prepare import create_features_set
+from .similarity import calculate_similarity
+from .summarize import Summarizer
 
 
-def generate_recommendations(
-    vectorized_playlist: pd.Series, df: pd.DataFrame, limit: int = 10
-):
-    numpy_representation = df.drop("track_id", axis=1).to_numpy()
-    # making it array of arrays (1, 53) instead of (53, )
-    reshaped_playlist = vectorized_playlist.to_numpy().reshape(1, -1)
+def generate_recommendations(tracks_df: pd.DataFrame, playlist_id: str):
+    features_df = create_features_set(tracks_df)
 
-    similarity = cosine_similarity(numpy_representation, reshaped_playlist)
+    s = Summarizer(features_df)
+    vectorized = s.summarize_playlist(playlist_id)
+    diff = s.differentiate_playlist_tracks(playlist_id)
 
-    # undo the array of arrays thing
-    df["similarity"] = similarity[:, 0]
-
-    ordered_recommendations = df.sort_values("similarity", ascending=False)
-
-    return ordered_recommendations.head(limit)
+    return calculate_similarity(vectorized, diff)
