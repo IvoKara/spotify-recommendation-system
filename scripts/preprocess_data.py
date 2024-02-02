@@ -1,6 +1,7 @@
 import pandas as pd
 
 from definitions import TRACKS_PATH
+from utils.log import dlog
 
 
 def remove_duplicates(df: pd.DataFrame):
@@ -16,12 +17,14 @@ def merge_by_genre(df: pd.DataFrame):
 
 
 def preprocess(df: pd.DataFrame):
-    print("with duplicates ", len(df.index))
+    dlog(f"All tracks with duplicates: {len(df.index)}")
+
     df = remove_duplicates(df)
-    print("without duplicates ", len(df.index))
+
+    dlog(f"Tracks without duplicates: {len(df.index)}")
 
     df = merge_by_genre(df)
-    print("after merge", len(df.index))
+    dlog(f"After merge on genre basis {len(df.index)}")
 
     return df
 
