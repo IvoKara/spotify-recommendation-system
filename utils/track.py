@@ -32,5 +32,6 @@ def is_valid(track: Track) -> bool:
     return (
         track is not None  # noqa
         and track["id"] is not None
-        and track["name"] is not None
+        and bool(track["name"])
+        and bool(track["artists"])
     )
